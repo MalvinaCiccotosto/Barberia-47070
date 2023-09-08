@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Barberia</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <body>
+        <h1>Simulador de Barbería</h1>
+
+        <form id="barberiaForm">
+            <label for="servicio">Selecciona un servicio:</label>
+            <select id="servicio" name="servicio">
+                <option value="corte">Corte de pelo - $2000</option>
+                <option value="afeitado">Afeitado - $1500</option>
+                <option value="barba">Arreglo de barba - $1000</option>
+            </select>
+    
+            <button type="button" onclick="agregarServicio()">Agregar Servicio</button>
+    
+            <h2>Servicios Seleccionados:</h2>
+            <ul id="serviciosSeleccionados"></ul>
+    
+            <button type="button" onclick="calcularPrecioTotal()">Calcular Total</button>
+            <button type="button" onclick="limpiarFormulario()">Limpiar</button>
+    
+            <h2>Total:</h2>
+            <p id="total"></p>
+        </form>
+    
+        <script>
+            const servicios = [];
+    
+            function agregarServicio() {
+                const form = document.getElementById('barberiaForm');
+                const servicio = form.servicio.value;
+    
+                if (servicio === "") {
+                    alert('Selecciona un servicio válido');
+                    return;
+                }
+    
+                servicios.push(servicio);
+    
+                const serviciosSeleccionados = document.getElementById('serviciosSeleccionados');
+                const li = document.createElement('li');
+                li.textContent = servicio;
+                serviciosSeleccionados.appendChild(li);
+    
+                form.servicio.selectedIndex = 0;
+            }
+    
+            function calcularPrecioTotal() {
+                let total = 0;
+    
+                for (let i = 0; i < servicios.length; i++) {
+                    switch (servicios[i]) {
+                        case 'corte':
+                            total += 2000;
+                            break;
+                        case 'afeitado':
+                            total += 1500;
+                            break;
+                        case 'barba':
+                            total += 1000;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+    
+                document.getElementById('total').textContent = `Total: $${total}`;
+            }
+    
+            function limpiarFormulario() {
+                servicios.length = 0;
+                const serviciosSeleccionados = document.getElementById('serviciosSeleccionados');
+                serviciosSeleccionados.innerHTML = "";
+                document.getElementById('total').textContent = "";
+            }
+        </script>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
