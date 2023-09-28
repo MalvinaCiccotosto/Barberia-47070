@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Barberia</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+    <header>
+        <h1>BARBERIA AL FILO</h1>
+    </header>
     <body>
-        <h1>Simulador de Barbería</h1>
-
+        <p>Bienvenido, <span id="nombreUsuario"></span>!</p>
         <form id="barberiaForm">
+            <label for="categoria">Filtrar por categoría:</label>
+            <input type="checkbox" id="categoriaHombre" name="categoria" value="hombre"> Hombre
+            <input type="checkbox" id="categoriaMujer" name="categoria" value="mujer"> Mujer
+            
             <label for="servicio">Selecciona un servicio:</label>
-            <select id="servicio" name="servicio">
-                <option value="corte">Corte de pelo - $2000</option>
-                <option value="afeitado">Afeitado - $1500</option>
-                <option value="barba">Arreglo de barba - $1000</option>
-            </select>
+            <select id="servicio" name="servicio"></select>
+
+        <label for="codigoDescuento">Código de Descuento:</label>
+        <input type="text" id="codigoDescuento" name="codigoDescuento">
     
             <button type="button" onclick="agregarServicio()">Agregar Servicio</button>
     
@@ -26,63 +31,11 @@
     
             <button type="button" onclick="calcularPrecioTotal()">Calcular Total</button>
             <button type="button" onclick="limpiarFormulario()">Limpiar</button>
-    
-            <h2>Total:</h2>
-            <p id="total"></p>
         </form>
-    
-        <script>
-            const servicios = [];
-    
-            function agregarServicio() {
-                const form = document.getElementById('barberiaForm');
-                const servicio = form.servicio.value;
-    
-                if (servicio === "") {
-                    alert('Selecciona un servicio válido');
-                    return;
-                }
-    
-                servicios.push(servicio);
-    
-                const serviciosSeleccionados = document.getElementById('serviciosSeleccionados');
-                const li = document.createElement('li');
-                li.textContent = servicio;
-                serviciosSeleccionados.appendChild(li);
-    
-                form.servicio.selectedIndex = 0;
-            }
-    
-            function calcularPrecioTotal() {
-                let total = 0;
-    
-                for (let i = 0; i < servicios.length; i++) {
-                    switch (servicios[i]) {
-                        case 'corte':
-                            total += 2000;
-                            break;
-                        case 'afeitado':
-                            total += 1500;
-                            break;
-                        case 'barba':
-                            total += 1000;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-    
-                document.getElementById('total').textContent = `Total: $${total}`;
-            }
-    
-            function limpiarFormulario() {
-                servicios.length = 0;
-                const serviciosSeleccionados = document.getElementById('serviciosSeleccionados');
-                serviciosSeleccionados.innerHTML = "";
-                document.getElementById('total').textContent = "";
-            }
-        </script>
 
+        <p id="total"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

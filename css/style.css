@@ -1,0 +1,17 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+header{
+    background-color: black;
+}
+
+h1{
+    color: darkgoldenrod;
+    text-align: center;
+}
+
+h2{
+    color: darkgoldenrod;
+}
