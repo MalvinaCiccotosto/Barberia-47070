@@ -34,14 +34,35 @@ const serviciosBarberia = {
 
 const servicioSelect = document.getElementById('servicio')
 const servicios = []
-let nombreCliente = prompt('Por favor, ingrese su nombre:')
 
-while (nombreCliente === null || nombreCliente === "") {
-    alert('El nombre es obligatorio. Por favor, ingrese su nombre:')
-    nombreCliente = prompt('Por favor, ingrese su nombre:')
+const loginForm = document.getElementById('loginForm')
+const barberiaForm = document.getElementById('barberiaForm')
+const nombreUsuarioElement = document.getElementById('nombreUsuario')
+const usernameInput = document.getElementById('username');
+const logoutButton = document.getElementById('logoutButton')
+
+const usuario = localStorage.getItem('usuario', nombreUsuario)
+
+if (usuario) {
+    mostrarBarberia(usuario);
+} else {
+    loginForm.style.display = 'block';
+    barberiaForm.style.display = 'none';
+
+    document.getElementById('loginButton').addEventListener('click', function() {
+        const nombreUsuario = document.getElementById('username').value.trim();
+
+        if (nombreUsuario === '') {
+            errorMensaje.style.display = 'block';
+        } else {
+            localStorage.setItem('usuario', nombreUsuario);
+            mostrarBarberia(nombreUsuario);
+            usernameInput.value = ''
+        }
+    });
 }
 
-document.getElementById('nombreUsuario').textContent = nombreCliente
+document.getElementById('nombreUsuario').textContent = usuario
 
 for (const servicioKey in serviciosBarberia) {
     if (serviciosBarberia.hasOwnProperty(servicioKey)) {
@@ -63,13 +84,23 @@ categoriaCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', actualizarSelect)
 })
 
+logoutButton.addEventListener('click', function() {
+    localStorage.removeItem('usuario');
+    loginForm.style.display = 'block';
+    barberiaForm.style.display = 'none';
+    nombreUsuarioElement.textContent = '';
+    errorMensaje.style.display = 'none'
+    usernameInput.value = ''
+});
+
+function mostrarBarberia(nombreUsuario) {
+    loginForm.style.display = 'none';
+    barberiaForm.style.display = 'block';
+    nombreUsuarioElement.textContent = nombreUsuario;
+}
+
 function agregarServicio() {
     const servicio = servicioSelect.value
-
-    if (!servicio) {
-        alert('Selecciona un servicio válido')
-        return
-    }
 
     servicios.push(servicio)
 
@@ -120,14 +151,11 @@ function calcularPrecioTotal() {
 
     if (codigoDescuento === '') {
         totalElement.textContent = `Total: $${total}`
-        alert(`${nombreCliente}, el total es: $${total}`)
     } else if (codigoDescuento.toUpperCase() === 'DESC15') {
         total = total * 0.85
         totalElement.textContent = `Total con descuento: $${total}`
-        alert(`${nombreCliente}, el total después del descuento es: $${total}`)
     } else {
         totalElement.textContent = `Total: $${total}`
-        alert('Código de descuento no válido. El descuento no se aplicó.')
     }
 }
 
