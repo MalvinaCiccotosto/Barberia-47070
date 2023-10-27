@@ -8,7 +8,7 @@ let serviciosBarberia
 
 async function fetchServiciosBarberia() {
     try {
-        const response = await fetch('Barberia-47070/api/servicios.json') 
+        const response = await fetch('/api/servicios.json') 
         if (!response.ok) {
             throw new Error('Error al obtener los servicios.') 
         }
