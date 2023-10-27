@@ -1,102 +1,87 @@
-const serviciosBarberia = {
-    corte: {
-        nombre: 'Corte de pelo',
-        precio: 2000,
-        categoria: 'hombre'
-    },
-    afeitado: {
-        nombre: 'Afeitado',
-        precio: 1500,
-        categoria: 'hombre'
-    },
-    barba: {
-        nombre: 'Arreglo de barba',
-        precio: 1000,
-        categoria: 'hombre'
-    },
-    cejas: {
-        nombre: 'Arreglo de cejas',
-        precio: 1000,
-        categoria: 'mujer'
-    },
-    manicura: {
-        nombre: 'Manicuria clasica',
-        precio: 5000,
-        categoria: 'mujer'
-    },
-    pedicura: {
-        nombre: 'Pedicuria moderna',
-        precio: 4000,
-        categoria: 'mujer'
-    }
-    
-}
-
 const servicioSelect = document.getElementById('servicio')
 const servicios = []
-
-const loginForm = document.getElementById('loginForm')
-const barberiaForm = document.getElementById('barberiaForm')
 const nombreUsuarioElement = document.getElementById('nombreUsuario')
-const usernameInput = document.getElementById('username');
+const usernameInput = document.getElementById('username')
+const errorMensaje = document.getElementById('errorMensaje')
 const logoutButton = document.getElementById('logoutButton')
+let serviciosBarberia
 
-const usuario = localStorage.getItem('usuario', nombreUsuario)
-
-if (usuario) {
-    mostrarBarberia(usuario);
-} else {
-    loginForm.style.display = 'block';
-    barberiaForm.style.display = 'none';
-
-    document.getElementById('loginButton').addEventListener('click', function() {
-        const nombreUsuario = document.getElementById('username').value.trim();
-
-        if (nombreUsuario === '') {
-            errorMensaje.style.display = 'block';
-        } else {
-            localStorage.setItem('usuario', nombreUsuario);
-            mostrarBarberia(nombreUsuario);
-            usernameInput.value = ''
+async function fetchServiciosBarberia() {
+    try {
+        const response = await fetch('../api/servicios.json') 
+        if (!response.ok) {
+            throw new Error('Error al obtener los servicios.') 
         }
-    });
-}
+        const data = await response.json()
 
-document.getElementById('nombreUsuario').textContent = usuario
-
-for (const servicioKey in serviciosBarberia) {
-    if (serviciosBarberia.hasOwnProperty(servicioKey)) {
-        const servicio = serviciosBarberia[servicioKey]
-        const option = document.createElement('option')
-        option.value = servicioKey
-        option.textContent = `${servicio.nombre} - $${servicio.precio}`
-        servicioSelect.appendChild(option)
+        return data
+    } catch (error) {
+        Swal.fire('Error', error.message, 'error') 
+        return null
     }
 }
 
-const form = document.getElementById('barberiaForm')
-const serviciosSeleccionados = document.getElementById('serviciosSeleccionados')
-const totalElement = document.getElementById('total')
-const codigoDescuentoInput = document.getElementById('codigoDescuento')
-const categoriaCheckboxes = document.querySelectorAll('input[name="categoria"]')
+async function main() {
+    serviciosBarberia = await fetchServiciosBarberia()
 
-categoriaCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', actualizarSelect)
-})
+    if (!serviciosBarberia) {
+        Swal.fire('Error', 'No se pudo obtener la informacion', 'error')
+        return
+    }
 
-logoutButton.addEventListener('click', function() {
-    localStorage.removeItem('usuario');
-    loginForm.style.display = 'block';
-    barberiaForm.style.display = 'none';
-    nombreUsuarioElement.textContent = '';
-    errorMensaje.style.display = 'none'
-    usernameInput.value = ''
-});
+    const usuario = localStorage.getItem('usuario')
+
+    if (usuario) {
+        mostrarBarberia(usuario)
+    } else {
+        document.getElementById('loginForm').style.display = 'block'
+        document.getElementById('barberiaForm').style.display = 'none'
+
+        document.getElementById('loginButton').addEventListener('click', function () {
+            const nombreUsuario = usernameInput.value.trim()
+
+            if (nombreUsuario === '') {
+                errorMensaje.style.display = 'block'
+            } else {
+                localStorage.setItem('usuario', nombreUsuario)
+                mostrarBarberia(nombreUsuario)
+                usernameInput.value = ''
+            }
+        })
+    }
+
+    document.getElementById('nombreUsuario').textContent = usuario
+
+    for (const servicioKey in serviciosBarberia) {
+        if (serviciosBarberia.hasOwnProperty(servicioKey)) {
+            const servicio = serviciosBarberia[servicioKey]
+            const option = document.createElement('option')
+            option.value = servicioKey
+            option.textContent = `${servicio.nombre} - $${servicio.precio}`
+            servicioSelect.appendChild(option)
+        }
+    }
+
+    const categoriaCheckboxes = document.querySelectorAll('input[name="categoria"]')
+
+    categoriaCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', actualizarSelect)
+    })
+
+    logoutButton.addEventListener('click', function () {
+        localStorage.removeItem('usuario')
+        document.getElementById('loginForm').style.display = 'block'
+        document.getElementById('barberiaForm').style.display = 'none'
+        nombreUsuarioElement.textContent = ''
+        errorMensaje.style.display = 'none'
+        usernameInput.value = ''
+    })
+}
 
 function mostrarBarberia(nombreUsuario) {
-    loginForm.style.display = 'none';
-    barberiaForm.style.display = 'block';
-    nombreUsuarioElement.textContent = nombreUsuario;
+    document.getElementById('loginForm').style.display = 'none'
+    document.getElementById('barberiaForm').style.display = 'block'
+    nombreUsuarioElement.textContent = nombreUsuario
 }
 
 function agregarServicio() {
@@ -106,20 +91,19 @@ function agregarServicio() {
 
     const li = document.createElement('li')
     li.textContent = servicioSelect.options[servicioSelect.selectedIndex].text
-    serviciosSeleccionados.appendChild(li)
+    document.getElementById('serviciosSeleccionados').appendChild(li)
 
     servicioSelect.selectedIndex = 0
 }
 
 function actualizarSelect() {
-    servicioSelect.innerHTML = ""
+    servicioSelect.innerHTML = ''
 
     const categoriaCheckbox = document.getElementsByName('categoria')
     const categoriasSeleccionadas = Array.from(categoriaCheckbox)
         .filter(checkbox => checkbox.checked)
         .map(checkbox => checkbox.value)
 
-    
     for (const servicioKey in serviciosBarberia) {
         if (
             serviciosBarberia.hasOwnProperty(servicioKey) &&
@@ -134,11 +118,12 @@ function actualizarSelect() {
     }
 }
 
-categoriaCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', actualizarSelect)
-})
-
 function calcularPrecioTotal() {
+    if (servicios.length === 0) {
+        Swal.fire('Error', 'No has agregado ningún producto para calcular.', 'error')
+        return 
+    }
+
     let total = 0
 
     servicios.forEach(servicio => {
@@ -147,20 +132,35 @@ function calcularPrecioTotal() {
         }
     })
 
-    const codigoDescuento = codigoDescuentoInput.value
+    const codigoDescuento = document.getElementById('codigoDescuento').value
 
     if (codigoDescuento === '') {
-        totalElement.textContent = `Total: $${total}`
+        Swal.fire('Total', `Total: $${total}`, 'success')
     } else if (codigoDescuento.toUpperCase() === 'DESC15') {
         total = total * 0.85
-        totalElement.textContent = `Total con descuento: $${total}`
+        Swal.fire('Total con Descuento', `Total con descuento: $${total}`, 'success')
     } else {
-        totalElement.textContent = `Total: $${total}`
+        Swal.fire('Total', `Total: $${total}`, 'success')
     }
 }
 
+
 function limpiarFormulario() {
-    servicios.length = 0
-    serviciosSeleccionados.innerHTML = ""
-    totalElement.textContent = ""
+    Swal.fire({
+        title: 'Limpiar formulario',
+        text: '¿Estás seguro de que deseas limpiar el formulario?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            servicios.length = 0
+            document.getElementById('serviciosSeleccionados').innerHTML = ''
+            document.getElementById('total').textContent = ''
+            Swal.fire('Formulario limpiado', '', 'success')
+        }
+    })
 }
+
+main()

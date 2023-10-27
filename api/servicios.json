@@ -1,0 +1,33 @@
+    {
+        "corte": {
+            "nombre": "Corte de pelo",
+            "precio": 2000,
+            "categoria": "hombre"
+        },
+        "afeitado": {
+            "nombre": "Afeitado",
+            "precio": 1500,
+            "categoria": "hombre"
+        },
+        "barba": {
+            "nombre": "Arreglo de barba",
+            "precio": 1000,
+            "categoria": "hombre"
+        },
+        "cejas": {
+            "nombre": "Arreglo de cejas",
+            "precio": 1000,
+            "categoria": "mujer"
+        },
+        "manicura": {
+            "nombre": "Manicuria clasica",
+            "precio": 5000,
+            "categoria": "mujer"
+        },
+        "pedicura": {
+            "nombre": "Pedicuria moderna",
+            "precio": 4000,
+            "categoria": "mujer"
+        }
+        
+    }
